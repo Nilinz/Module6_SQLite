@@ -2,10 +2,8 @@ import sqlite3
 from faker import Faker
 import random
 
-# Ініціалізуємо Faker для генерації випадкових даних
 fake = Faker()
 
-# Створюємо підключення до бази даних
 conn = sqlite3.connect('university.db')
 cursor = conn.cursor()
 
@@ -39,29 +37,29 @@ cursor.execute('''CREATE TABLE grades
                    grade INTEGER,
                    date_received DATE)''')
 
-# Генеруємо дані для груп
+# Дані для груп
 group_names = ['Група 1', 'Група 2', 'Група 3']
 for group_name in group_names:
     cursor.execute("INSERT INTO groups (name) VALUES (?)", (group_name,))
     group_id = cursor.lastrowid
 
-    # Генеруємо дані для студентів у кожній групі
+    # Дані для студентів у кожній групі
     for _ in range(random.randint(10, 20)):
         student_name = fake.name()
         cursor.execute("INSERT INTO students (name, group_id) VALUES (?, ?)", (student_name, group_id))
 
-# Генеруємо дані для викладачів
+# Дані для викладачів
 teacher_names = [fake.name() for _ in range(3)]
 for teacher_name in teacher_names:
     cursor.execute("INSERT INTO teachers (name) VALUES (?)", (teacher_name,))
     teacher_id = cursor.lastrowid
 
-    # Генеруємо дані для предметів, які викладає викладач
+    # Дані для предметів, які викладає викладач
     for _ in range(random.randint(3, 5)):
         subject_name = fake.word()
         cursor.execute("INSERT INTO subjects (name, teacher_id) VALUES (?, ?)", (subject_name, teacher_id))
 
-# Генеруємо дані для оцінок студентів
+# Дані для оцінок студентів
 for student_id in range(1, len(group_names) * 20 + 1):
     for subject_id in range(1, len(teacher_names) * 5 + 1):
         grade = random.randint(60, 100)
@@ -69,6 +67,6 @@ for student_id in range(1, len(group_names) * 20 + 1):
         cursor.execute("INSERT INTO grades (student_id, subject_id, grade, date_received) VALUES (?, ?, ?, ?)",
                        (student_id, subject_id, grade, date_received))
 
-# Зберігаємо зміни у базі даних і закриваємо підключення
+
 conn.commit()
 conn.close()
